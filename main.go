@@ -52,10 +52,12 @@ func main() {
 
 	r := gin.Default()
 
+	reservedMaxV4 := netip.MustParsePrefix("240.0.0.0/4")
 	r.GET("/dox/ip", func(c *gin.Context) {
 		ip := c.Query("ip")
 		if ip == "" {
 			responses.SendErrorResponse(codes.ErrIpNotProvided, nil, c)
+			return
 		}
 
 		lang := c.DefaultQuery("lang", "ru")
@@ -89,7 +91,7 @@ func main() {
 				continue
 			}
 
-			if !addr.IsGlobalUnicast() {
+			if !addr.IsGlobalUnicast() || (addr.Is4() && reservedMaxV4.Contains(addr)) {
 				response = append(response, gin.H{"result": "ip not exists"})
 				continue
 			}

@@ -1,0 +1,18 @@
+services:
+  app-dev:
+    container_name: svc-dox
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./dbs:/dbs:ro
+
+    networks:
+      shared-net:
+        ipv6_address: fd98:2dd6:8f48:1d99:3b03:a78e::2
+
+networks:
+  shared-net:
+    external: true
+    name: svc-net
+
