@@ -1,8 +1,9 @@
 module svc-dox
 
-go 1.25.9
+go 1.26.0
 
 require (
+	github.com/FreedomDevs/svcLibs/go/svcLibs v0.0.0-20260717180803-4a16e45dcce6
 	github.com/gin-gonic/gin v1.12.0
 	github.com/oschwald/geoip2-golang v1.13.0
 )

@@ -4,38 +4,11 @@ import (
 	"log"
 	"net/netip"
 	"strings"
-	"svc-dox/responses"
-	"svc-dox/responses/codes"
 
+	"github.com/FreedomDevs/svcLibs/go/svcLibs"
 	"github.com/gin-gonic/gin"
 	"github.com/oschwald/geoip2-golang"
 )
-
-func getLocalName(lang string, names map[string]string) string {
-	// Если мапы нет в базе (город/страна не найдены), возвращаем заглушку
-	if names == nil {
-		return "Unknown"
-	}
-
-	// 1. Проверяем запрошенный язык (например, "ru")
-	if name, exists := names[lang]; exists && name != "" {
-		return name
-	}
-
-	// 2. Откатываемся на английский, если запрошенного языка не нашлось
-	if name, exists := names["en"]; exists && name != "" {
-		return name
-	}
-
-	// 3. Крайний случай: если нет ни "lang", ни "en", возвращаем любой имеющийся перевод
-	for _, name := range names {
-		if name != "" {
-			return name
-		}
-	}
-
-	return "Unknown"
-}
 
 func main() {
 	cityDB, err := geoip2.Open("dbs/city.mmdb")
@@ -56,7 +29,7 @@ func main() {
 	r.GET("/dox/ip", func(c *gin.Context) {
 		ip := c.Query("ip")
 		if ip == "" {
-			responses.SendErrorResponse(codes.ErrIpNotProvided, nil, c)
+			svcLibs.SendErrorResponse(ErrIpNotProvided, c)
 			return
 		}
 
@@ -133,7 +106,7 @@ func main() {
 			response = append(response, netresponse)
 		}
 
-		responses.SendSuccessResponse(codes.SuccessIpDox, response, c)
+		svcLibs.SendSuccessResponse(SuccessIpDox, response, c)
 	})
 
 	r.Run("[::]:80")
